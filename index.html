@@ -1,20 +1,106 @@
 <html>
-    <head>
-        <title>${title}</title>
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    </head>
-    <body>
-        <div id="app">
-                {{ message }}
+
+<head>
+    <title>qpjiang</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <style>
+        html{
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            background-color: #F8F8F8;
+        }
+        body{
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+        }
+        .container{
+            padding: 10px;
+            margin: 10px;
+        }
+        .pagetitle{
+            padding: 10px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: large;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div v-html="message" class="pagetitle"></div>
+        <hr/>
+        <div class="container">
+                <p>
+                        <!-- 使用 router-link 组件来导航. -->
+                        <!-- 通过传入 `to` 属性指定链接. -->
+                        <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+                        <router-link to="/base">简介</router-link>
+                        <router-link to="/about">关于</router-link>
+                    </p>
+                    <!-- 路由出口 -->
+                    <!-- 路由匹配到的组件将渲染在这里 -->
+                    <router-view></router-view>
+            
         </div>
-        <script>
-            var app = new Vue({
-                el: 'html',
-                data: {
-                    message: 'welcome to qpjiang.github.io !',
-                    title:"qpjiang"
+       
+    </div>
+    <script>
+        // 全局组件
+        Vue.component('VBASE', {
+            template: `
+                <div>
+                    <div>github:  <a v-html="hreftxt" v-bind:href="github"></a></div>
+                    <div>作者: qpjiang</div>
+                    <div>访问时间: <span v-html="datefetch"></span></div>
+                </div>
+            `,
+            data:function(){
+                var  n = new Date();
+                return {
+                    github:"https://github.com/QPJIANG",
+                    hreftxt:"github",
+                    datefetch:n
                 }
-            });
-        </script>
-    </body>
+            }
+        });
+
+        const Base = {
+            template: '<VBASE></VBASE>'
+        }
+        const About = {
+            template: '<div>（关于）这家伙太懒了，什么都没写！</div>'
+        }
+
+
+        const routes = [
+            { path: '/base', component: Base },
+            { path: '/about', component: About }
+        ]
+
+        // 3. 创建 router 实例，然后传 `routes` 配置
+        // 你还可以传别的配置参数, 不过先这么简单着吧。
+        const router = new VueRouter({
+            routes // （缩写）相当于 routes: routes
+        })
+
+        // 4. 创建和挂载根实例。
+        // 记得要通过 router 配置参数注入路由，
+        // 从而让整个应用都有路由功能
+        const app = new Vue({
+            router,
+            data: {
+                message: 'welcome to qpjiang.github.io !'
+            }
+        }).$mount('#app')
+
+        window.addEventListener('popstate', () => {
+                app.currentRoute = window.location.pathname
+        });
+    </script>
+</body>
+
 </html>
